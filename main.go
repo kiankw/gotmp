@@ -1,11 +1,7 @@
-package gotmp
+package main
 
 import "fmt"
 
-func Hello() string {
-	return "Hello World!"
-}
-
-func PrintHello() {
-	fmt.Println(Hello())
+func main() {
+	fmt.Println("Hello World!")
 }
