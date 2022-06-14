@@ -1,47 +1,47 @@
 package main
 
-import "fmt"
-
-type MySeeker interface {
-	MySeek(name string)
+type A interface {
+	fa(name string)
 }
 
-type MyFile interface {
-	MySeeker
+type B interface {
+	A
+	fb(name string)
 }
 
-type A struct {
-	F MyFile
+type C interface {
+	A
+	fc(name string)
 }
 
-func (a A) MySeek(name string) {
-	a.F.MySeek(name)
+type D interface {
+	B
+	C
+	fd(name string)
 }
 
-type B struct {
-	S MySeeker
+type T struct {
+	id int
 }
 
-func (b B) MySeek(name string) {
-	b.S.MySeek(name)
+func (t T) fa(name string) {
+
 }
 
-type C struct {
+func (t T) fb(name string) {
+
 }
 
-func (c C) MySeek(name string) {
-	fmt.Println(name)
+func (t T) fc(name string) {
+
+}
+
+func (t T) fd(name string) {
+
 }
 
 func main() {
 	var a A
-	var b B
-	var c C
-
-	a.F = c
-	b.S = c
-
-	a.MySeek("Hello")
-	b.MySeek("Hello")
-
+	a = T{id: 1}
+	a.fa("Hello")
 }
