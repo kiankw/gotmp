@@ -1,47 +1,29 @@
 package main
 
-type A interface {
-	fa(name string)
+import "fmt"
+
+type A struct {
+	info func() string
 }
 
-type B interface {
-	A
-	fb(name string)
+var ATable = []*A{{
+	info: f0,
+}, {
+	info: f1,
+}}
+
+func f0() string {
+	return "func 0"
 }
 
-type C interface {
-	A
-	fc(name string)
-}
-
-type D interface {
-	B
-	C
-	fd(name string)
-}
-
-type T struct {
-	id int
-}
-
-func (t T) fa(name string) {
-
-}
-
-func (t T) fb(name string) {
-
-}
-
-func (t T) fc(name string) {
-
-}
-
-func (t T) fd(name string) {
-
+func f1() string {
+	return "func 1"
 }
 
 func main() {
-	var a A
-	a = T{id: 1}
-	a.fa("Hello")
+	var form int
+	fmt.Scanln(&form)
+
+	a := *ATable[form]
+	fmt.Println(a.info())
 }
