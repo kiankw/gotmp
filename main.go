@@ -1,68 +1,47 @@
 package main
 
-import (
-	"fmt"
-	"io"
-	"io/fs"
-)
+import "fmt"
 
-type File interface {
-	io.Closer
-	io.Reader
-	io.ReaderAt
-	io.Seeker
-	io.Writer
-	io.WriterAt
+type MySeeker interface {
+	MySeek(name string)
 }
 
-type UnionFile struct {
-	Base  File
-	Layer File
+type MyFile interface {
+	MySeeker
 }
 
-func (f *UnionFile) Seek(o int64, w int) (pos int64, err error) {
-	if f.Layer != nil {
-		pos, err = f.Layer.Seek(o, w)
-		if (err == nil || err == io.EOF) && f.Base != nil {
-			_, err = f.Base.Seek(o, w)
-		}
-		return pos, err
-	}
-	if f.Base != nil {
-		return f.Base.Seek(o, w)
-	}
-	return 0, nil
+type A struct {
+	F MyFile
 }
 
-type RegexpFile struct {
-	f File
+func (a A) MySeek(name string) {
+	a.F.MySeek(name)
 }
 
-func (f *RegexpFile) Seek(o int64, w int) (int64, error) {
-	return f.f.Seek(o, w)
+type B struct {
+	S MySeeker
 }
 
-type fromIOFSFile struct {
-	fs.File
+func (b B) MySeek(name string) {
+	b.S.MySeek(name)
 }
 
-func (f fromIOFSFile) Seek(offset int64, whence int) (int64, error) {
-	seeker, ok := f.File.(io.Seeker)
-	if !ok {
-		return -1, nil
-	}
-	return seeker.Seek(offset, whence)
+type C struct {
+}
+
+func (c C) MySeek(name string) {
+	fmt.Println(name)
 }
 
 func main() {
-	var f fromIOFSFile
+	var a A
+	var b B
+	var c C
 
-	seeker, ok := f.File.(io.Seeker)
-	if ok {
-		fmt.Println(ok)
-	}
+	a.F = c
+	b.S = c
 
-	seeker.Seek(1, 1)
+	a.MySeek("Hello")
+	b.MySeek("Hello")
 
-	fmt.Println("Hello World!")
 }
